@@ -25,7 +25,7 @@
                     <div class="col-md-3">
                         <a href="#" class="btn btn-success" @click.prevent="add">
                             <i class="fas fa-plus"></i> Add New
-                        </a>                        
+                        </a>
                     </div>
                     <div class="col-md-9">
                         <div class="form-inline justify-content-end">
@@ -55,7 +55,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="product of productsPanigated">
+                        <tr v-for="product of productsPanigated"
+                            :class="{ 'table-danger': removedProductId == product.id}">
                             <td>{{ product.name }}</td>
                             <td>{{ product.category }}</td>
                             <td>{{ product.price }}</td>
@@ -74,13 +75,14 @@
             <div class="card-footer">
                 <nav>
                     <ul class="pagination justify-content-center">
-                        <li class="page-item" :class="{disabled: isFirstPage}"><a class="page-link" href="#"
-                                @click.prevent="prev">Previous</a></li>
-                        <li class="page-item" :class="{ active: currentPage === page  }" v-for="page of pages">
-                            <a class="page-link" href="#" @click.prevent="switchPage(page)">{{ page }}</a>
+                        <li class="page-item" :class="{ disabled: isFirstPage }"><a class="page-link" href="?page=1"
+                                @click="prev($event)">First</a></li>
+                        <li class="page-item" :class="{ active: currentPage === page }" v-for="page in pages">
+                            <a class="page-link" :href="`?page=${page}`" @click="switchPage(page, $event)">{{ page
+                                }}</a>
                         </li>
-                        <li class="page-item" :class="{disabled: isLastPage}"><a class="page-link" href="#"
-                                @click.prevent="next">Next</a></li>
+                        <li class="page-item" :class="{ disabled: isLastPage }"><a class="page-link"
+                                :href="`?page=${pages}`" @click="next($event)">Last</a></li>
                     </ul>
                 </nav>
             </div>
@@ -100,23 +102,33 @@
                         <form>
                             <div class="form-group">
                                 <label>Product Name</label>
-                                <input type="text" v-model="product.name" class="form-control">
+                                <input type="text" v-model="product.name" class="form-control"
+                                    :class="{ 'is-invalid': errors.name }">
+                                <span class="invalid-feedback" v-if="errors.name">{{ errors.name[0] }}</span>
                             </div>
                             <div class="form-group">
                                 <label>Category</label>
-                                <select class="form-control" v-model="product.category">
-                                    <option v-for="category in categories" :value="category">{{category}}</option>
+                                <select class="form-control" :class="{ 'is-invalid': errors.category_id }"
+                                    v-model="product.category_id">
+                                    <option v-for="category in categories" :value="category.id">{{ category.name }}
+                                    </option>
                                 </select>
+                                <span class="invalid-feedback" v-if="errors.category_id">{{ errors.category_id[0]
+                                    }}</span>
                             </div>
                             <div class="form-group">
                                 <label>Price ($)</label>
-                                <input type="number" v-model="product.price" class="form-control">
+                                <input type="number" v-model="product.price" class="form-control"
+                                    :class="{ 'is-invalid': errors.price }">
+                                <span class="invalid-feedback" v-if="errors.price">{{ errors.price[0] }}</span>
+
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" @click.prevent="saveOrUpdate">{{ modalTextButton }}</button>
+                        <button type="button" class="btn btn-success" @click.prevent="saveOrUpdate">{{ modalTextButton
+                            }}</button>
                     </div>
                 </div>
             </div>
@@ -133,7 +145,7 @@
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js"></script>
     <script src="./app.js"></script>
 </body>
 
